@@ -28,7 +28,8 @@ ancientsData.forEach(el => {
 
 function selectCard(el) {
   card_selected = ancientsData[Array.from(el.target.parentElement.parentElement.children).indexOf(el.target.parentElement)];
-  console.log(card_selected) // ----------------------  DELETE
+  console.log(el.target.nextElementSibling) // ----------------------  DELETE  
+
   hide_items()
   setTimeout(show_difficulties, 100) 
 }
@@ -95,6 +96,8 @@ function shuffle(el) {
   let deck_full_blue = { ...cards_blue};
 
   let deck_stage1 = [];
+  let deck_stage2 = [];
+  let deck_stage3 = [];
 
   for (let i = 0; i < card_selected.firstStage.greenCards; i++) {    
     let randomCard;
@@ -109,6 +112,7 @@ function shuffle(el) {
     do { randomCard = 'brown' + getRandomInt(1, Object.keys(deck_full_brown).length + 1) }
     while (deck_full_brown[randomCard] === undefined);     
     deck_stage1.push(deck_full_brown[randomCard]);
+    
     delete deck_full_brown[randomCard]; 
   }
 
@@ -119,10 +123,72 @@ function shuffle(el) {
     deck_stage1.push(deck_full_blue[randomCard]);
     delete deck_full_blue[randomCard]; 
   }
-
-
   console.log('stage1', deck_stage1)
+
+
+
+  for (let i = 0; i < card_selected.secondStage.greenCards; i++) {    
+    let randomCard;
+    do { randomCard = 'green' + getRandomInt(1, Object.keys(deck_full_green).length + 1) }
+    while (deck_full_green[randomCard] === undefined);     
+    deck_stage2.push(deck_full_green[randomCard]);
+    delete deck_full_green[randomCard]; 
+  }
+  
+  for (let i = 0; i < card_selected.secondStage.brownCards; i++) {    
+    let randomCard;
+    do { randomCard = 'brown' + getRandomInt(1, Object.keys(deck_full_brown).length + 1) }
+    while (deck_full_brown[randomCard] === undefined);     
+    deck_stage2.push(deck_full_brown[randomCard]);
+    
+    delete deck_full_brown[randomCard]; 
+  }
+
+  for (let i = 0; i < card_selected.secondStage.blueCards; i++) {    
+    let randomCard;
+    do { randomCard = 'blue' + getRandomInt(1, Object.keys(deck_full_blue).length + 1) }
+    while (deck_full_blue[randomCard] === undefined);     
+    deck_stage2.push(deck_full_blue[randomCard]);
+    delete deck_full_blue[randomCard]; 
+  }
+  console.log('stage2', deck_stage2)
+
+
+
+  for (let i = 0; i < card_selected.thirdStage.greenCards; i++) {    
+    let randomCard;
+    do { randomCard = 'green' + getRandomInt(1, Object.keys(deck_full_green).length + 1) }
+    while (deck_full_green[randomCard] === undefined);     
+    deck_stage3.push(deck_full_green[randomCard]);
+    delete deck_full_green[randomCard]; 
+  }
+  
+  for (let i = 0; i < card_selected.thirdStage.brownCards; i++) {    
+    let randomCard;
+    do { randomCard = 'brown' + getRandomInt(1, Object.keys(deck_full_brown).length + 1) }
+    while (deck_full_brown[randomCard] === undefined);     
+    deck_stage3.push(deck_full_brown[randomCard]);
+    
+    delete deck_full_brown[randomCard]; 
+  }
+
+  for (let i = 0; i < card_selected.thirdStage.blueCards; i++) {    
+    let randomCard;
+    do { randomCard = 'blue' + getRandomInt(1, Object.keys(deck_full_blue).length + 1) }
+    while (deck_full_blue[randomCard] === undefined);     
+    deck_stage3.push(deck_full_blue[randomCard]);
+    delete deck_full_blue[randomCard]; 
+  }
+  console.log('stage3', deck_stage3)
+  
+
+
+
 }
+
+
+
+
 
 
 function getRandomInt(min, max) {

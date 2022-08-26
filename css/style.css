@@ -19,6 +19,7 @@ body {
 .ancient_card_img {
   width: 200px;
   transition: 0.3s;
+  z-index: 10;
 }
 
 .ancient_card_img:hover{
@@ -37,6 +38,7 @@ body {
 .difficulties {
   width: 200px;
   display: flex;
+  gap: 10px;
   list-style: none;
   flex-direction: column;  
   text-align: center;
@@ -63,6 +65,7 @@ body {
 .stages_block {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .stage_row {
@@ -92,3 +95,6 @@ body {
   background-color: rgb(78, 78, 254);
 }
 
+.current_cards {
+  display: flex;
+}
