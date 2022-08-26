@@ -1,6 +1,11 @@
 body {
   display: flex;
   flex-direction: column;
+  max-width: 1500px;
+  margin:auto;
+  padding: 50px;
+  background-image: url(../assets/home.png);
+  color: aliceblue;
 }
 
 .ancients {
@@ -97,4 +102,5 @@ body {
 
 .current_cards {
   display: flex;
+  gap: 20px;
 }

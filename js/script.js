@@ -4,17 +4,18 @@ import cards_green from '../assets/MythicCards/green/index.js'
 import cards_brown from '../assets/MythicCards/brown/index.js'
 import cards_blue from '../assets/MythicCards/blue/index.js'
 
-console.log(ancientsData) // ----------------------  DELETE
-console.log(cards_green) // ----------------------  DELETE
-
-
 const ancients_block = document.querySelector('.ancients');
 const difficulties_block = document.querySelector('.difficulties');
 const button_shuffle = document.querySelector("#button_shuffle");
 const deck_block = document.querySelector('.deck_block');
 const stages_block = document.querySelector('.stages_block');
+const cards_back_block = document.querySelector('.cards_back');
+const cards_face_block = document.querySelector('.cards_face');
 
 let card_selected = {};
+let deck_firstStage = [];
+let deck_secondStage = [];
+let deck_thirdStage = [];
 
 ancientsData.forEach(el => {
   const li = document.createElement('li');
@@ -25,11 +26,8 @@ ancientsData.forEach(el => {
   li.addEventListener("click", selectCard)
 })
 
-
 function selectCard(el) {
   card_selected = ancientsData[Array.from(el.target.parentElement.parentElement.children).indexOf(el.target.parentElement)];
-  console.log(el.target.nextElementSibling) // ----------------------  DELETE  
-
   hide_items()
   setTimeout(show_difficulties, 100) 
 }
@@ -49,150 +47,122 @@ function show_difficulties() {
     li.innerHTML = `${el.name}` 
     difficulties_block.append(li);
     li.addEventListener("click", selectDifficulty)
-
   })
 }
 
 function selectDifficulty(el) {
   button_shuffle.parentElement.classList.remove('hidden')
   let difficulty_selected = difficulties[Array.from(el.target.parentElement.parentElement.children).indexOf(el.target.parentElement)];
-  console.log(difficulty_selected) // ----------------------  DELETE
-  
   button_shuffle.addEventListener("click", shuffle)
-
 }
 
 function shuffle(el) {
   deck_block.classList.remove('hidden')
-  console.log(el.target) // ----------------------  DELETE
- 
-
-  let currentCards = [[card_selected.firstStage.greenCards, card_selected.firstStage.brownCards, card_selected.firstStage.blueCards],
-                      [card_selected.secondStage.greenCards, card_selected.secondStage.brownCards, card_selected.secondStage.blueCards],
-                      [card_selected.thirdStage.greenCards, card_selected.thirdStage.brownCards, card_selected.thirdStage.blueCards]];
-
-
-  stages_block.innerHTML = `<div class="stage_row stage1_cards_counter">
-                                    <div>1й этап:</div>
-                                    <div class="circle green">${currentCards[0][0]}</div>
-                                    <div class="circle brown">${currentCards[0][1]}</div>
-                                    <div class="circle blue">${currentCards[0][2]}</div>
-                                  </div>
-                                  <div class="stage_row stage2_cards_counter">
-                                    <div>2й этап:</div>
-                                    <div class="circle green">${currentCards[1][0]}</div>
-                                    <div class="circle brown">${currentCards[1][1]}</div>
-                                    <div class="circle blue">${currentCards[1][2]}</div>
-                                  </div>
-                                  <div class="stage_row stage3_cards_counter">
-                                    <div>3й этап:</div>
-                                    <div class="circle green">${currentCards[2][0]}</div>
-                                    <div class="circle brown">${currentCards[2][1]}</div>
-                                    <div class="circle blue">${currentCards[2][2]}</div>
-                                  </div>`
-
+  
   let deck_full_green = { ...cards_green};
   let deck_full_brown = { ...cards_brown};
   let deck_full_blue = { ...cards_blue};
 
-  let deck_stage1 = [];
-  let deck_stage2 = [];
-  let deck_stage3 = [];
+  let colors = ['green', 'brown', 'blue'];
+  let stages = ['firstStage', 'secondStage', 'thirdStage'];
 
-  for (let i = 0; i < card_selected.firstStage.greenCards; i++) {    
-    let randomCard;
-    do { randomCard = 'green' + getRandomInt(1, Object.keys(deck_full_green).length + 1) }
-    while (deck_full_green[randomCard] === undefined);     
-    deck_stage1.push(deck_full_green[randomCard]);
-    delete deck_full_green[randomCard]; 
-  }
+  function createDeck() {    
+    stages.forEach(stage => {
+      eval(`deck_${stage} = []`);
+      colors.forEach(color => { 
+        for (let i = 0; i < eval(`card_selected.${stage}.${color}Cards`); i++) { 
+          let randomCard;        
+          eval(`randomCard = getRandomInt(0, Object.keys(deck_full_${color}).length - 1)`)        
+          eval(`deck_${stage}.push(Object.values(deck_full_${color})[${randomCard}])`);
+          eval(`delete deck_full_${color}[Object.keys(deck_full_${color})[randomCard]]`)                
+        }
+      })
+      eval(`shuffleArray(deck_${stage})`); 
+    })   
+  };
   
-  for (let i = 0; i < card_selected.firstStage.brownCards; i++) {    
-    let randomCard;
-    do { randomCard = 'brown' + getRandomInt(1, Object.keys(deck_full_brown).length + 1) }
-    while (deck_full_brown[randomCard] === undefined);     
-    deck_stage1.push(deck_full_brown[randomCard]);
-    
-    delete deck_full_brown[randomCard]; 
-  }
-
-  for (let i = 0; i < card_selected.firstStage.blueCards; i++) {    
-    let randomCard;
-    do { randomCard = 'blue' + getRandomInt(1, Object.keys(deck_full_blue).length + 1) }
-    while (deck_full_blue[randomCard] === undefined);     
-    deck_stage1.push(deck_full_blue[randomCard]);
-    delete deck_full_blue[randomCard]; 
-  }
-  console.log('stage1', deck_stage1)
-
-
-
-  for (let i = 0; i < card_selected.secondStage.greenCards; i++) {    
-    let randomCard;
-    do { randomCard = 'green' + getRandomInt(1, Object.keys(deck_full_green).length + 1) }
-    while (deck_full_green[randomCard] === undefined);     
-    deck_stage2.push(deck_full_green[randomCard]);
-    delete deck_full_green[randomCard]; 
-  }
+  createDeck()
+  updateCounter()
+  drawCards()
   
-  for (let i = 0; i < card_selected.secondStage.brownCards; i++) {    
-    let randomCard;
-    do { randomCard = 'brown' + getRandomInt(1, Object.keys(deck_full_brown).length + 1) }
-    while (deck_full_brown[randomCard] === undefined);     
-    deck_stage2.push(deck_full_brown[randomCard]);
-    
-    delete deck_full_brown[randomCard]; 
-  }
-
-  for (let i = 0; i < card_selected.secondStage.blueCards; i++) {    
-    let randomCard;
-    do { randomCard = 'blue' + getRandomInt(1, Object.keys(deck_full_blue).length + 1) }
-    while (deck_full_blue[randomCard] === undefined);     
-    deck_stage2.push(deck_full_blue[randomCard]);
-    delete deck_full_blue[randomCard]; 
-  }
-  console.log('stage2', deck_stage2)
-
-
-
-  for (let i = 0; i < card_selected.thirdStage.greenCards; i++) {    
-    let randomCard;
-    do { randomCard = 'green' + getRandomInt(1, Object.keys(deck_full_green).length + 1) }
-    while (deck_full_green[randomCard] === undefined);     
-    deck_stage3.push(deck_full_green[randomCard]);
-    delete deck_full_green[randomCard]; 
-  }
-  
-  for (let i = 0; i < card_selected.thirdStage.brownCards; i++) {    
-    let randomCard;
-    do { randomCard = 'brown' + getRandomInt(1, Object.keys(deck_full_brown).length + 1) }
-    while (deck_full_brown[randomCard] === undefined);     
-    deck_stage3.push(deck_full_brown[randomCard]);
-    
-    delete deck_full_brown[randomCard]; 
-  }
-
-  for (let i = 0; i < card_selected.thirdStage.blueCards; i++) {    
-    let randomCard;
-    do { randomCard = 'blue' + getRandomInt(1, Object.keys(deck_full_blue).length + 1) }
-    while (deck_full_blue[randomCard] === undefined);     
-    deck_stage3.push(deck_full_blue[randomCard]);
-    delete deck_full_blue[randomCard]; 
-  }
-  console.log('stage3', deck_stage3)
-  
-
-
-
+  console.log('firstStage', deck_firstStage);
+  console.log('secondStage', deck_secondStage);
+  console.log('thirdStage', deck_thirdStage);  
 }
 
+function drawCards() {  
+  let total = deck_firstStage.length + deck_secondStage.length + deck_thirdStage.length
+  if (total > 0) {
+    cards_back_block.innerHTML = `<img id="" class="" src="../assets/mythicCardBackground.png" alt="cards_back">
+                              <p>Осталось карт: ${total}</p>`
+  }
+  else {
+    cards_back_block.innerHTML = `<img id="" class="" src="../assets/mythicCardBackground_no.png" alt="cards_back">
+    <p>Больше карт нет!</p>`
+  }      
+}
 
+function updateCounter() {
+  stages_block.innerHTML = `<div class="stage_row stage1_cards_counter">
+                              <div>1й этап:</div>
+                              <div class="circle green">${updater('firstStage', 'green')}</div>
+                              <div class="circle brown">${updater('firstStage', 'brown')}</div>
+                              <div class="circle blue">${updater('firstStage', 'blue')}</div>
+                            </div>
+                            <div class="stage_row stage2_cards_counter">
+                              <div>2й этап:</div>
+                              <div class="circle green">${updater('secondStage', 'green')}</div>
+                              <div class="circle brown">${updater('secondStage', 'brown')}</div>
+                              <div class="circle blue">${updater('secondStage', 'blue')}</div>
+                            </div>
+                            <div class="stage_row stage3_cards_counter">
+                              <div>3й этап:</div>
+                              <div class="circle green">${updater('thirdStage', 'green')}</div>
+                              <div class="circle brown">${updater('thirdStage', 'brown')}</div>
+                              <div class="circle blue">${updater('thirdStage', 'blue')}</div>
+                            </div>`
+}
 
+function updater(stage, color) {
+  return eval(`deck_${stage}.filter(item => item.includes('${color}')).length`);
+}
 
+cards_back_block.addEventListener('click', nextCard)
+
+function nextCard() {  
+  
+  if (deck_firstStage.length > 0) {    
+    cards_face_block.innerHTML = `<img id="" class="" src="${deck_firstStage[0]}" alt="cards_back">`;    
+    deck_firstStage.splice(0, 1);
+  }
+  else if (deck_secondStage.length > 0) {    
+    cards_face_block.innerHTML = `<img id="" class="" src="${deck_secondStage[0]}" alt="cards_back">`;
+    deck_secondStage.splice(0, 1);
+  }
+  else if (deck_thirdStage.length > 0) {    
+    cards_face_block.innerHTML = `<img id="" class="" src="${deck_thirdStage[0]}" alt="cards_back">`;
+    deck_thirdStage.splice(0, 1);
+  }
+  else {
+    console.log('no more cards')
+  }
+
+  console.log(deck_firstStage.length, deck_secondStage.length, deck_thirdStage.length);
+
+  updateCounter()
+  drawCards()
+}
 
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
