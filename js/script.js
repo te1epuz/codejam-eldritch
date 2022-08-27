@@ -1,4 +1,5 @@
 import ancientsData from '../data/ancients.js'
+import cardsData from '../data/mythicCards/index.js'
 import difficulties from '../data/difficulties.js'
 import cards_green from '../assets/MythicCards/green/index.js'
 import cards_brown from '../assets/MythicCards/brown/index.js'
@@ -13,9 +14,12 @@ const cards_back_block = document.querySelector('.cards_back');
 const cards_face_block = document.querySelector('.cards_face');
 
 let card_selected = {};
+let difficulty_selected = {};
 let deck_firstStage = [];
 let deck_secondStage = [];
 let deck_thirdStage = [];
+let colors = ['green', 'brown', 'blue'];
+let stages = ['firstStage', 'secondStage', 'thirdStage'];
 
 ancientsData.forEach(el => {
   const li = document.createElement('li');
@@ -51,43 +55,58 @@ function show_difficulties() {
 }
 
 function selectDifficulty(el) {
+  deck_block.classList.add('hidden')
   button_shuffle.parentElement.classList.remove('hidden')
-  let difficulty_selected = difficulties[Array.from(el.target.parentElement.parentElement.children).indexOf(el.target.parentElement)];
+  difficulty_selected = difficulties[Array.from(el.target.parentElement.children).indexOf(el.target)];
+  console.log(difficulty_selected);
   button_shuffle.addEventListener("click", shuffle)
 }
 
-function shuffle(el) {
+function shuffle() {
   deck_block.classList.remove('hidden')
   
-  let deck_full_green = { ...cards_green};
-  let deck_full_brown = { ...cards_brown};
-  let deck_full_blue = { ...cards_blue};
 
-  let colors = ['green', 'brown', 'blue'];
-  let stages = ['firstStage', 'secondStage', 'thirdStage'];
+  let deck_full_green = [ ...cardsData.greenCards];  
+  let deck_full_brown = [ ...cardsData.brownCards];
+  let deck_full_blue = [ ...cardsData.blueCards];
 
-  function createDeck() {    
+  if (difficulty_selected.id === 'easy') {
+    colors.forEach(color => {
+      eval(`deck_full_${color} = deck_full_${color}.filter(item => item.difficulty === 'easy' || item.difficulty === 'normal')`);
+    })
+  }
+
+  if (difficulty_selected.id === 'hard') {
+    colors.forEach(color => {
+      eval(`deck_full_${color} = deck_full_${color}.filter(item => item.difficulty === 'hard' || item.difficulty === 'normal')`);
+    })
+  }
+
+    function createDeck() {    
     stages.forEach(stage => {
       eval(`deck_${stage} = []`);
       colors.forEach(color => { 
         for (let i = 0; i < eval(`card_selected.${stage}.${color}Cards`); i++) { 
-          let randomCard;        
-          eval(`randomCard = getRandomInt(0, Object.keys(deck_full_${color}).length - 1)`)        
-          eval(`deck_${stage}.push(Object.values(deck_full_${color})[${randomCard}])`);
-          eval(`delete deck_full_${color}[Object.keys(deck_full_${color})[randomCard]]`)                
+          let randomCard;
+          eval(`randomCard = getRandomInt(0, deck_full_${color}.length - 1)`);
+          eval(`deck_${stage}.push(deck_full_${color}[randomCard].cardFace)`);          
+          eval(`deck_full_${color}.splice(randomCard, 1)`);          
         }
       })
       eval(`shuffleArray(deck_${stage})`); 
     })   
   };
-  
+ 
   createDeck()
+
+  console.log('firstStage', deck_firstStage);
+  console.log('secondStage', deck_secondStage);
+  console.log('thirdStage', deck_thirdStage);
+
   updateCounter()
   drawCards()
   
-  console.log('firstStage', deck_firstStage);
-  console.log('secondStage', deck_secondStage);
-  console.log('thirdStage', deck_thirdStage);  
+  
 }
 
 function drawCards() {  

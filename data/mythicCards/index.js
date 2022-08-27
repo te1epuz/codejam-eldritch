@@ -1,8 +1,8 @@
-import brownCards from './brown';
-import blueCards from './blue';
-import greenCards from './green';
+import brownCards from './brown/index.js';
+import blueCards from './blue/index.js';
+import greenCards from './green/index.js';
 
-export {
+export default {
   brownCards,
   blueCards,
   greenCards
