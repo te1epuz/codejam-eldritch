@@ -5,8 +5,9 @@ import difficulties from '../data/difficulties.js'
 const ancients_block = document.querySelector('.ancients');
 const difficulties_block = document.querySelector('.difficulties');
 const button_shuffle = document.querySelector("#button_shuffle");
-const deck_block = document.querySelector('.deck_block');
+const counter_block = document.querySelector('.counter_block');
 const stages_block = document.querySelector('.stages_block');
+const deck_block = document.querySelector('.deck_block');
 const cards_back_block = document.querySelector('.cards_back');
 const cards_face_block = document.querySelector('.cards_face');
 
@@ -30,18 +31,20 @@ ancientsData.forEach(el => {
 function selectCard(el) {
   card_selected = ancientsData[Array.from(el.target.parentElement.parentElement.children).indexOf(el.target.parentElement)];
   hide_items()
-  setTimeout(show_difficulties, 100) 
+  Array.from(el.target.parentElement.parentElement.children).forEach(value => value.classList.remove('selected'))
+  el.target.parentElement.classList.add('selected')  
+  setTimeout(show_difficulties, 200) 
 }
 
-function hide_items() {
-  difficulties_block.parentElement.classList.add('hidden')
+function hide_items() {  
   button_shuffle.parentElement.classList.add('hidden')
+  counter_block.classList.add('hidden')
   deck_block.classList.add('hidden')
 }
 
 function show_difficulties() {   
   difficulties_block.innerHTML = "";
-  difficulties_block.parentElement.classList.remove('hidden')
+  difficulties_block.parentElement.classList.remove('hidden')  
   difficulties.forEach(el => {
     const li = document.createElement('li');
     li.classList.add('difficulty_card');
@@ -52,16 +55,18 @@ function show_difficulties() {
 }
 
 function selectDifficulty(el) {
+  counter_block.classList.add('hidden')
   deck_block.classList.add('hidden')
   button_shuffle.parentElement.classList.remove('hidden')
   difficulty_selected = difficulties[Array.from(el.target.parentElement.children).indexOf(el.target)];
-  console.log(difficulty_selected);
+  Array.from(el.target.parentElement.children).forEach(value => value.classList.remove('selected'))
+  el.target.classList.add('selected')
   button_shuffle.addEventListener("click", shuffle)
 }
 
 function shuffle() {
   deck_block.classList.remove('hidden')
-
+  counter_block.classList.remove('hidden')
   let deck_full_green = [ ...cardsData.greenCards];
   let deck_full_brown = [ ...cardsData.brownCards];
   let deck_full_blue = [ ...cardsData.blueCards];
@@ -74,7 +79,6 @@ function shuffle() {
   if (difficulty_selected.id === 'hard') {
     colors.forEach(color => {
       eval(`deck_full_${color} = deck_full_${color}.filter(item => item.difficulty === 'hard' || item.difficulty === 'normal')`);
-      eval(`console.log(deck_full_${color})`)
     })
   }
   if (difficulty_selected.id === 'very easy') {
@@ -128,8 +132,8 @@ function shuffle() {
 function drawCards() {  
   let total = deck_firstStage.length + deck_secondStage.length + deck_thirdStage.length
   if (total > 0) {
-    cards_back_block.innerHTML = `<img id="" class="" src="../assets/mythicCardBackground.png" alt="cards_back">
-                              <p>Осталось карт: ${total}</p>`
+    cards_back_block.innerHTML = `<img id="" class="" src="../assets/mythicCardBackground.png" alt="cards_back">                                  
+                                  <p>Осталось карт: ${total}</p>`
   }
   else {
     cards_back_block.innerHTML = `<img id="" class="" src="../assets/mythicCardBackground_no.png" alt="cards_back">
@@ -176,9 +180,6 @@ function nextCard() {
   else if (deck_thirdStage.length > 0) {    
     cards_face_block.innerHTML = `<img id="" class="" src="${deck_thirdStage[0]}" alt="cards_back">`;
     deck_thirdStage.splice(0, 1);
-  }
-  else {
-    console.log('no more cards')
   }
   updateCounter()
   drawCards()
