@@ -132,11 +132,11 @@ function shuffle() {
 function drawCards() {  
   let total = deck_firstStage.length + deck_secondStage.length + deck_thirdStage.length
   if (total > 0) {
-    cards_back_block.innerHTML = `<img id="" class="" src="../assets/mythicCardBackground.png" alt="cards_back">                                  
+    cards_back_block.innerHTML = `<img id="" class="" src="./assets/mythicCardBackground.png" alt="cards_back">                                  
                                   <p>Осталось карт: ${total}</p>`
   }
   else {
-    cards_back_block.innerHTML = `<img id="" class="" src="../assets/mythicCardBackground_no.png" alt="cards_back">
+    cards_back_block.innerHTML = `<img id="" class="" src="./assets/mythicCardBackground_no.png" alt="cards_back">
     <p>Больше карт нет!</p>`
   }      
 }
