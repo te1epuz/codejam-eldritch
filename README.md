@@ -1,2 +1,1 @@
-# codejam-eldritch
-rs school task
+https://te1epuz.github.io/codejam-eldritch/index.html
